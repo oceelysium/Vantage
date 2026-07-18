@@ -1,0 +1,25 @@
+gameid,datacompleteness,date,league,patch,side,position,playername,teamname,champion,ban1,ban2,ban3,ban4,ban5,pick1,pick2,pick3,pick4,pick5,result
+G1,complete,2024-06-01,LEC,14.13,Blue,top,B_Top,BlueTeamA,Wukong,,,,,,,,,,,1
+G1,complete,2024-06-01,LEC,14.13,Blue,jng,B_Jng,BlueTeamA,Lee Sin,,,,,,,,,,,1
+G1,complete,2024-06-01,LEC,14.13,Blue,mid,B_Mid,BlueTeamA,Ahri,,,,,,,,,,,1
+G1,complete,2024-06-01,LEC,14.13,Blue,bot,B_Bot,BlueTeamA,Jinx,,,,,,,,,,,1
+G1,complete,2024-06-01,LEC,14.13,Blue,sup,B_Sup,BlueTeamA,Thresh,,,,,,,,,,,1
+G1,complete,2024-06-01,LEC,14.13,Red,top,R_Top,RedTeamB,Renekton,,,,,,,,,,,0
+G1,complete,2024-06-01,LEC,14.13,Red,jng,R_Jng,RedTeamB,Nunu & Willump,,,,,,,,,,,0
+G1,complete,2024-06-01,LEC,14.13,Red,mid,R_Mid,RedTeamB,Syndra,,,,,,,,,,,0
+G1,complete,2024-06-01,LEC,14.13,Red,bot,R_Bot,RedTeamB,Kai'Sa,,,,,,,,,,,0
+G1,complete,2024-06-01,LEC,14.13,Red,sup,R_Sup,RedTeamB,Renata Glasc,,,,,,,,,,,0
+G1,complete,2024-06-01,LEC,14.13,Blue,team,,BlueTeamA,,Vi,Jax,None,,,Ahri,Wukong,Jinx,Lee Sin,Thresh,1
+G1,complete,2024-06-01,LEC,14.13,Red,team,,RedTeamB,,Azir,,,,,Renekton,Syndra,Nunu & Willump,Kai'Sa,Renata Glasc,0
+G2,complete,2024-06-02,LCK,14.14.1,Blue,top,B2_Top,BlueTeamC,Gnar,,,,,,,,,,,0
+G2,complete,2024-06-02,LCK,14.14.1,Blue,jng,B2_Jng,BlueTeamC,Vi,,,,,,,,,,,0
+G2,complete,2024-06-02,LCK,14.14.1,Blue,mid,B2_Mid,BlueTeamC,Azir,,,,,,,,,,,0
+G2,complete,2024-06-02,LCK,14.14.1,Blue,bot,B2_Bot,BlueTeamC,Ezreal,,,,,,,,,,,0
+G2,complete,2024-06-02,LCK,14.14.1,Blue,sup,B2_Sup,BlueTeamC,Lulu,,,,,,,,,,,0
+G2,complete,2024-06-02,LCK,14.14.1,Red,top,R2_Top,RedTeamD,Jax,,,,,,,,,,,1
+G2,complete,2024-06-02,LCK,14.14.1,Red,jng,R2_Jng,RedTeamD,Sejuani,,,,,,,,,,,1
+G2,complete,2024-06-02,LCK,14.14.1,Red,mid,R2_Mid,RedTeamD,Orianna,,,,,,,,,,,1
+G2,complete,2024-06-02,LCK,14.14.1,Red,bot,R2_Bot,RedTeamD,Aphelios,,,,,,,,,,,1
+G2,complete,2024-06-02,LCK,14.14.1,Red,sup,R2_Sup,RedTeamD,Nautilus,,,,,,,,,,,1
+G2,complete,2024-06-02,LCK,14.14.1,Blue,team,,BlueTeamC,,None,,,,,,,,,,0
+G2,complete,2024-06-02,LCK,14.14.1,Red,team,,RedTeamD,,Ahri,,,,,,,,,,1

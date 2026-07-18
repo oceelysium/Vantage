@@ -1,0 +1,21 @@
+{
+    "name": "vantage",
+    "version": "3.2.1",
+    "workspaces": [
+        "packages/*",
+        "apps/*"
+    ],
+    "scripts": {
+        "bump-version": "bun run typecheck && bun scripts/bump-version.ts",
+        "typecheck": "turbo typecheck",
+        "dev": "bun run --filter @draftgap/frontend dev",
+        "tauri": "bun run --filter @draftgap/frontend tauri"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "dependencies": {
+        "turbo": "^2.8.1"
+    },
+    "packageManager": "bun@1.3.6"
+}

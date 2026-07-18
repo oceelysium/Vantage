@@ -1,0 +1,16 @@
+{
+    "name": "@draftgap/core",
+    "version": "3.2.1",
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "format": "bunx prettier . --write"
+    },
+    "devDependencies": {
+        "prettier": "3.8.1",
+        "typescript": "^5.9.3"
+    },
+    "dependencies": {
+        "@tanstack/query-core": "^5.90.20"
+    },
+    "packageManager": "bun@1.3.6"
+}

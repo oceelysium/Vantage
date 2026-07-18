@@ -1,0 +1,19 @@
+node_modules/
+.env
+.env.local
+.turbo
+
+# Build output
+dist/
+apps/frontend/dist/
+apps/frontend/src-tauri/target/
+
+# Generated pro dataset (rebuild with `bun run pro:local`)
+apps/frontend/public/datasets/
+
+# Local Oracle's Elixir source data (large)
+*_LoL_esports_match_data_from_OraclesElixir.csv
+
+# Logs / OS cruft
+*.log
+.DS_Store

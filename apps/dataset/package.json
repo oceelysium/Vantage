@@ -1,0 +1,24 @@
+{
+    "name": "@draftgap/dataset",
+    "version": "3.2.1",
+    "scripts": {
+        "start": "bun run src/index.ts",
+        "pro": "bun run src/pro-index.ts",
+        "pro:local": "bun run src/pro-local.ts",
+        "pro:backtest": "bun run src/pro-backtest.ts",
+        "test": "bun test",
+        "typecheck": "tsc --noEmit",
+        "format": "bunx prettier . --write"
+    },
+    "dependencies": {
+        "@aws-sdk/client-s3": "^3.980.0",
+        "@draftgap/core": "workspace:*",
+        "dotenv": "^17.2.3"
+    },
+    "devDependencies": {
+        "@types/bun": "latest",
+        "prettier": "3.8.1",
+        "typescript": "^5.9.3"
+    },
+    "packageManager": "bun@1.3.6"
+}

@@ -1,0 +1,201 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Marcellus&display=swap");
+@import "tailwindcss";
+
+@plugin '@kobalte/tailwindcss';
+
+@theme {
+    --color-primary: #ffffff;
+    --color-secondary: #9a7b43;
+    --color-tertiary: #b0894e;
+    --color-background: #f6f3ec;
+    --color-text: #1b1a17;
+    --color-ally: #2f6fd0;
+    --color-opponent: #c0433f;
+
+    --color-winrate-shiggo: #d23b36;
+    --color-winrate-meh: #c76a73;
+    --color-winrate-okay: #57534a;
+    --color-winrate-good: #3f79cf;
+    --color-winrate-great: #2b5fd0;
+    --color-winrate-volxd: #bd7a1c;
+
+    --color-neutral-50: #1b1a17;
+    --color-neutral-100: #26241f;
+    --color-neutral-200: #343029;
+    --color-neutral-300: #4e4a41;
+    --color-neutral-400: #6d685d;
+    --color-neutral-500: #8c867a;
+    --color-neutral-600: #a9a396;
+    --color-neutral-700: #d7d2c7;
+    --color-neutral-800: #e9e5dc;
+    --color-neutral-900: #f6f3ec;
+    --color-neutral-950: #fdfcf9;
+
+    --font-title: "Marcellus", "Cormorant Garamond", Georgia, serif;
+    --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --font-header: "Oswald", sans-serif;
+    --font-body:
+        "OpenSans", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+        Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+
+    --animate-enter: enter 0.15s ease-out;
+    --animate-leave: leave 0.1s ease-in forwards;
+    --animate-dialog-enter: enter 0.3s ease-out;
+    --animate-dialog-leave: leave 0.2s ease-in forwards;
+    --animate-enter-opacity: enter-opacity 0.15s ease-out;
+    --animate-leave-opacity: leave-opacity 0.1s ease-in forwards;
+    --animate-slot-pulse: slot-pulse 1.5s ease-in-out infinite;
+
+    @keyframes enter {
+        0% {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    @keyframes leave {
+        100% {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+    @keyframes enter-opacity {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+    @keyframes leave-opacity {
+        100% {
+            opacity: 0;
+        }
+        0% {
+            opacity: 1;
+        }
+    }
+    @keyframes slot-pulse {
+        0%,
+        100% {
+            background-color: color-mix(
+                in srgb,
+                var(--color-secondary) 6%,
+                transparent
+            );
+        }
+        50% {
+            background-color: color-mix(
+                in srgb,
+                var(--color-secondary) 24%,
+                transparent
+            );
+        }
+    }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
+}
+
+@layer base {
+    body {
+        @apply bg-background text-text font-header;
+    }
+
+    html,
+    body {
+        scroll-behavior: smooth;
+    }
+
+    button,
+    [role="button"] {
+        cursor: default;
+    }
+}
+
+:root {
+    color-scheme: light;
+}
+
+@font-face {
+    font-family: "Oswald";
+    src: url("/fonts/Oswald-VariableFont_wght.ttf") format("truetype");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "OpenSans";
+    src: url("/fonts/OpenSans-VariableFont_wdth,wght.ttf") format("truetype");
+    font-display: swap;
+}
+
+/* Popper */
+#arrow,
+#arrow::before {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+}
+
+#arrow {
+    visibility: hidden;
+}
+
+#arrow::before {
+    visibility: visible;
+    content: "";
+    background-color: #ffffff;
+    border-bottom: rgba(0, 0, 0, 0.12) solid 1px;
+    border-right: rgba(0, 0, 0, 0.12) solid 1px;
+}
+
+#tooltip[data-popper-placement^="top"] #arrow {
+    bottom: -4px;
+}
+#tooltip[data-popper-placement^="top"] #arrow::before {
+    transform: rotate(45deg);
+}
+
+#tooltip[data-popper-placement^="bottom"] #arrow {
+    top: -4px;
+}
+#tooltip[data-popper-placement^="bottom"] #arrow::before {
+    transform: rotate(225deg);
+}
+
+#tooltip[data-popper-placement^="left"] #arrow {
+    right: -4px;
+}
+#tooltip[data-popper-placement^="left"] #arrow::before {
+    transform: rotate(-45deg);
+}
+
+#tooltip[data-popper-placement^="right"] #arrow {
+    left: -4px;
+}
+#tooltip[data-popper-placement^="right"] #arrow::before {
+    transform: rotate(135deg);
+}
