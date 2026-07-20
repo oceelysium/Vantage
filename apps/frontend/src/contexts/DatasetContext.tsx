@@ -11,11 +11,11 @@ import {
 } from "@draftgap/core/src/models/dataset/Dataset";
 import { useUser } from "./UserContext";
 
-// Host for the soloqueue datasets. Defaults to the upstream DraftGap bucket for
-// convenience; set VITE_DATASET_BASE_URL to your own host before deploying
-// anything public so you aren't serving data at the upstream author's expense.
-const DATASET_BASE_URL =
-    import.meta.env.VITE_DATASET_BASE_URL ?? "https://bucket.draftgap.com";
+// Where the soloqueue datasets live. Default is same-origin (relative), i.e. the
+// JSON files are bundled into the site under public/datasets/ and served by the
+// site itself — no bucket or CORS needed. Set VITE_DATASET_BASE_URL to a
+// bucket/CDN URL to host them elsewhere instead.
+const DATASET_BASE_URL = import.meta.env.VITE_DATASET_BASE_URL ?? "";
 
 const soloqUrl = (name: "30-days" | "current-patch") =>
     `${DATASET_BASE_URL}/datasets/v${DATASET_VERSION}/${name}.json`;
