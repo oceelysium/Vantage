@@ -138,7 +138,7 @@
        so it isn't clipped by the scroll container or adjacent rows. */
     tbody tr:focus-visible,
     tbody tr:focus {
-        outline: 2px solid var(--color-ally);
+        outline: 2px solid var(--color-secondary);
         outline-offset: -3px;
         border-radius: 2px;
     }

@@ -374,6 +374,17 @@ export default function DraftTable() {
 
         const teamPicks =
             selection.team === "ally" ? allyTeam : opponentTeam;
+
+        // Ignore if this champion is already on the selected team. Prevents an
+        // accidental double-click (common while the dataset is still loading)
+        // from picking it a second time into the next slot and wiping the first
+        // slot via clash resolution.
+        if (
+            teamPicks.some((p) => p.championKey === row.original.championKey)
+        ) {
+            return;
+        }
+
         let index = selection.index;
         // Defensive: if the active slot is already filled (e.g. a stale
         // selection after a load hiccup), drop the pick into the next empty
