@@ -362,10 +362,20 @@ export default function DraftTable() {
         getSortedRowModel: getSortedRowModel(),
     });
 
+    // Absorbs accidental double-clicks and lag-induced repeat clicks so a single
+    // intended pick can't fire twice and cascade into the wrong slots — most
+    // noticeable in pro mode, where the larger dataset makes the UI briefly
+    // jank after each pick.
+    let lastPickAt = 0;
+
     function pick(row: Row<Suggestion>) {
         // Ignore picks until the dataset has fully loaded, so clicks during the
         // launch parse lag can't misfire into the wrong slot.
         if (!isLoaded()) return;
+
+        const now = Date.now();
+        if (now - lastPickAt < 350) return;
+        lastPickAt = now;
 
         if (!selection.team) {
             createMustSelectToast();
