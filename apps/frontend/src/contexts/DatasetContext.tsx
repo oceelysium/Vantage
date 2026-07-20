@@ -20,10 +20,12 @@ const DATASET_BASE_URL =
 const soloqUrl = (name: "30-days" | "current-patch") =>
     `${DATASET_BASE_URL}/datasets/v${DATASET_VERSION}/${name}.json`;
 
-// The pro dataset is produced locally (bun run pro:local) and served by Vite from
-// apps/frontend/public/datasets/. There is a single pro dataset, so both the
-// current-patch and 30-days slots point at it in pro mode.
-const PRO_URL = "/datasets/pro-current-patch.json";
+// The pro dataset is produced locally (bun run pro:local). By default it's served
+// by the static site from apps/frontend/public/datasets/ (relative path). To host
+// it on a bucket instead, set VITE_PRO_DATASET_URL to its full URL. There is a
+// single pro dataset, so both the current-patch and 30-days slots point at it.
+const PRO_URL =
+    import.meta.env.VITE_PRO_DATASET_URL ?? "/datasets/pro-current-patch.json";
 
 const fetchFrom = async (url: string): Promise<Dataset | undefined> => {
     try {
