@@ -158,10 +158,6 @@ export default function DraftTable() {
     ) {
         batch(() => {
             if (!pick) {
-                // eslint-disable-next-line no-console
-                console.log("[vantage] analysisClear", {
-                    selIndex: selection.index,
-                });
                 pickChampion(
                     selection.team!,
                     selection.index,
@@ -180,12 +176,6 @@ export default function DraftTable() {
                 return;
             }
             if (pick.role !== undefined) {
-                // eslint-disable-next-line no-console
-                console.log("[vantage] analysisFill", {
-                    champ: pick.championKey,
-                    role: pick.role,
-                    selIndex: selection.index,
-                });
                 setSavedRoleFilter(roleFilter());
                 pickChampion(
                     selection.team!,
@@ -412,16 +402,6 @@ export default function DraftTable() {
             (p) => p.championKey === undefined,
         );
         const index = firstEmpty !== -1 ? firstEmpty : selection.index;
-
-        // eslint-disable-next-line no-console
-        console.log("[vantage] pick", {
-            champ: row.original.championKey,
-            team: selection.team,
-            selIndex: selection.index,
-            firstEmpty,
-            target: index,
-            slots: teamPicks.map((p) => p.championKey ?? "_"),
-        });
 
         pickChampion(
             selection.team,
