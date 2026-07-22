@@ -449,6 +449,9 @@ const App: Component = () => {
                     >
                         <DesktopAppDialog open={showDownloadModal()} />
                     </Dialog>
+                    <span class="hidden md:inline text-[10px] uppercase tracking-[0.25em] text-neutral-500 select-none whitespace-nowrap">
+                        By Elysium
+                    </span>
                     <div class="flex gap-1">
                         <LanguageDropdownMenu />
                         <Dialog
