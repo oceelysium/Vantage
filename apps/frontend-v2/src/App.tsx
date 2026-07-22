@@ -28,7 +28,12 @@ import { tooltip } from "./directives/tooltip";
 // eslint-disable-next-line
 tooltip;
 import { useUser } from "./contexts/UserContext";
-import { displayNameByTier, DEFAULT_TIER } from "@draftgap/core/src/models/Tier";
+import {
+    displayNameByTier,
+    DEFAULT_TIER,
+    emblemUrlByTier,
+    tierStyleByTier,
+} from "@draftgap/core/src/models/Tier";
 import { useDataset } from "./contexts/DatasetContext";
 import type { Dataset } from "@draftgap/core/src/models/dataset/Dataset";
 import { LoadingIcon } from "./components/icons/LoadingIcon";
@@ -362,22 +367,35 @@ const App: Component = () => {
                     <img src="/vantage_logo.png" alt="VANTAGE" class="h-24 -my-7.5 w-auto object-contain select-none mix-blend-screen" />
                 </div>
                 <div class="flex-1 flex items-center justify-end gap-4">
-                    <div class="hidden md:flex flex-col items-end gap-1 select-none">
+                    <div class="hidden md:flex items-center gap-2 text-xs select-none">
                         <Show
                             when={isPro() && dataset()?.proMeta}
                             fallback={
-                                <div class="flex items-center gap-1.5 text-xs">
-                                    {/* Rank Tier Badge */}
-                                    <span
-                                        class="px-2 py-0.5 rounded bg-cyan-950/40 text-secondary border border-secondary/30 font-title font-bold text-[11px] tracking-wider shadow-[0_0_8px_rgba(0,243,255,0.12)] uppercase"
+                                <div class="flex items-center gap-2 text-xs font-body">
+                                    {/* Rank Tier Emblem Pill */}
+                                    <div
+                                        class={cn(
+                                            "inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[11px] font-title font-bold tracking-wider select-none",
+                                            tierStyleByTier[config.tier ?? DEFAULT_TIER].bg,
+                                            tierStyleByTier[config.tier ?? DEFAULT_TIER].border,
+                                            tierStyleByTier[config.tier ?? DEFAULT_TIER].text,
+                                            tierStyleByTier[config.tier ?? DEFAULT_TIER].shadow,
+                                        )}
                                         title={`Rank tier: ${displayNameByTier[config.tier ?? DEFAULT_TIER]}`}
                                     >
-                                        {displayNameByTier[config.tier ?? DEFAULT_TIER]}
-                                    </span>
+                                        <img
+                                            src={emblemUrlByTier[config.tier ?? DEFAULT_TIER]}
+                                            alt=""
+                                            class="w-7 h-7 -my-1 object-contain select-none"
+                                        />
+                                        <span>{displayNameByTier[config.tier ?? DEFAULT_TIER]}</span>
+                                    </div>
 
-                                    {/* Patch & Games Badge */}
+                                    <span class="text-neutral-600">•</span>
+
+                                    {/* Patch & Games */}
                                     <span
-                                        class="px-2 py-0.5 rounded bg-neutral-900/90 text-neutral-300 border border-neutral-800 font-mono text-[10px] tracking-wider uppercase"
+                                        class="text-neutral-300 text-xs"
                                         title={`${formatCount(currentGames())} games recorded on this patch${
                                             patchVolumePct() !== undefined
                                                 ? ` (~${patchVolumePct()}% of the 30-day sample)`
@@ -387,36 +405,40 @@ const App: Component = () => {
                                         Patch {dataset()?.version ?? ""} · {formatCount(currentGames())} games
                                     </span>
 
-                                    {/* Thin Sample Alert Tag */}
+                                    {/* Thin Sample Tag (Static, no flashing) */}
                                     <Show
                                         when={
                                             patchVolumePct() !== undefined &&
                                             patchVolumePct()! < 25
                                         }
                                     >
-                                        <span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[9px] font-mono tracking-widest uppercase font-bold flex items-center gap-1">
-                                            <span class="w-1 h-1 rounded-full bg-amber-400 animate-ping" />
+                                        <span class="text-neutral-600">•</span>
+                                        <span class="px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 text-[11px] font-medium uppercase tracking-wide">
                                             Thin
                                         </span>
                                     </Show>
 
-                                    {/* Telemetry Timestamp */}
-                                    <span class="pl-1 text-[10px] font-mono text-neutral-400 uppercase flex items-center gap-1">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span class="text-neutral-600">•</span>
+
+                                    {/* Telemetry Timestamp (Static green dot, no flashing) */}
+                                    <span class="text-neutral-400 text-xs flex items-center gap-1.5">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80" />
                                         Updated {timeAgo()}
                                     </span>
                                 </div>
                             }
                         >
-                            <div class="flex items-center gap-1.5 text-xs">
-                                <span class="px-2 py-0.5 rounded bg-indigo-950/40 text-indigo-300 border border-indigo-500/30 font-title font-bold text-[11px] tracking-wider uppercase">
+                            <div class="flex items-center gap-2 text-xs font-body">
+                                <span class="font-semibold text-indigo-400 tracking-wide text-xs">
                                     PRO DATA
                                 </span>
-                                <span class="px-2 py-0.5 rounded bg-neutral-900/90 text-neutral-300 border border-neutral-800 font-mono text-[10px] tracking-wider uppercase">
+                                <span class="text-neutral-600">•</span>
+                                <span class="text-neutral-300 text-xs">
                                     {dataset()!.proMeta!.matches.toLocaleString()} games · {patchSummary(dataset()!.proMeta!.patches)}
                                 </span>
-                                <span class="text-[10px] font-mono text-neutral-400 uppercase flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span class="text-neutral-600">•</span>
+                                <span class="text-neutral-400 text-xs flex items-center gap-1.5">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500/80" />
                                     {leagueSummary(dataset()!.proMeta!.leagues)} · Built {timeAgo()}
                                 </span>
                             </div>
