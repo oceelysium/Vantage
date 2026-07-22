@@ -362,48 +362,64 @@ const App: Component = () => {
                     <img src="/vantage_logo.png" alt="VANTAGE" class="h-24 -my-7.5 w-auto object-contain select-none mix-blend-screen" />
                 </div>
                 <div class="flex-1 flex items-center justify-end gap-4">
-                    <div class="text-xs text-neutral-400 hidden md:flex flex-col text-right uppercase">
+                    <div class="hidden md:flex flex-col items-end gap-1 select-none">
                         <Show
                             when={isPro() && dataset()?.proMeta}
                             fallback={
-                                <>
+                                <div class="flex items-center gap-1.5 text-xs">
+                                    {/* Rank Tier Badge */}
                                     <span
+                                        class="px-2 py-0.5 rounded bg-cyan-950/40 text-secondary border border-secondary/30 font-title font-bold text-[11px] tracking-wider shadow-[0_0_8px_rgba(0,243,255,0.12)] uppercase"
+                                        title={`Rank tier: ${displayNameByTier[config.tier ?? DEFAULT_TIER]}`}
+                                    >
+                                        {displayNameByTier[config.tier ?? DEFAULT_TIER]}
+                                    </span>
+
+                                    {/* Patch & Games Badge */}
+                                    <span
+                                        class="px-2 py-0.5 rounded bg-neutral-900/90 text-neutral-300 border border-neutral-800 font-mono text-[10px] tracking-wider uppercase"
                                         title={`${formatCount(currentGames())} games recorded on this patch${
                                             patchVolumePct() !== undefined
                                                 ? ` (~${patchVolumePct()}% of the 30-day sample)`
                                                 : ""
-                                        }. New patches start thin — base win rates are smoothed toward the 30-day average until data builds up. Matchups and synergies always use the 30-day window.`}
+                                        }. Base win rates are smoothed toward the 30-day average.`}
                                     >
-                                        {displayNameByTier[
-                                            config.tier ?? DEFAULT_TIER
-                                        ]}{" "}
-                                        · Patch {dataset()?.version ?? ""} ·{" "}
-                                        {formatCount(currentGames())} games
-                                        <Show
-                                            when={
-                                                patchVolumePct() !==
-                                                    undefined &&
-                                                patchVolumePct()! < 25
-                                            }
-                                        >
-                                            <span class="text-winrate-volxd">
-                                                {" "}
-                                                · thin
-                                            </span>
-                                        </Show>
+                                        Patch {dataset()?.version ?? ""} · {formatCount(currentGames())} games
                                     </span>
-                                    <span>Updated {timeAgo()}</span>
-                                </>
+
+                                    {/* Thin Sample Alert Tag */}
+                                    <Show
+                                        when={
+                                            patchVolumePct() !== undefined &&
+                                            patchVolumePct()! < 25
+                                        }
+                                    >
+                                        <span class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[9px] font-mono tracking-widest uppercase font-bold flex items-center gap-1">
+                                            <span class="w-1 h-1 rounded-full bg-amber-400 animate-ping" />
+                                            Thin
+                                        </span>
+                                    </Show>
+
+                                    {/* Telemetry Timestamp */}
+                                    <span class="pl-1 text-[10px] font-mono text-neutral-400 uppercase flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                        Updated {timeAgo()}
+                                    </span>
+                                </div>
                             }
                         >
-                            <span>
-                                {dataset()!.proMeta!.matches.toLocaleString()}{" "}
-                                games · {patchSummary(dataset()!.proMeta!.patches)}
-                            </span>
-                            <span>
-                                {leagueSummary(dataset()!.proMeta!.leagues)} ·
-                                built {timeAgo()}
-                            </span>
+                            <div class="flex items-center gap-1.5 text-xs">
+                                <span class="px-2 py-0.5 rounded bg-indigo-950/40 text-indigo-300 border border-indigo-500/30 font-title font-bold text-[11px] tracking-wider uppercase">
+                                    PRO DATA
+                                </span>
+                                <span class="px-2 py-0.5 rounded bg-neutral-900/90 text-neutral-300 border border-neutral-800 font-mono text-[10px] tracking-wider uppercase">
+                                    {dataset()!.proMeta!.matches.toLocaleString()} games · {patchSummary(dataset()!.proMeta!.patches)}
+                                </span>
+                                <span class="text-[10px] font-mono text-neutral-400 uppercase flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    {leagueSummary(dataset()!.proMeta!.leagues)} · Built {timeAgo()}
+                                </span>
+                            </div>
                         </Show>
                     </div>
                     <Dialog

@@ -7,22 +7,22 @@ export function Switch(props: ComponentProps<typeof SwitchPrimitives.Root>) {
         <SwitchPrimitives.Root
             {...props}
             class={cn(
-                "relative inline-flex h-6 w-11 bg-neutral-700 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out hover:bg-neutral-600",
+                "relative inline-flex h-6 w-11 shrink-0 rounded-full border border-neutral-800 bg-neutral-950 transition-all duration-200 ease-in-out cursor-pointer items-center",
                 {
-                    "bg-secondary hover:bg-secondary": props.checked,
+                    "bg-secondary/20 border-secondary shadow-[0_0_10px_rgba(0,243,255,0.25)]": props.checked,
                 },
                 props.class,
             )}
         >
             <SwitchPrimitives.Input />
-            <SwitchPrimitives.Control class="w-full">
+            <SwitchPrimitives.Control class="w-full h-full flex items-center">
                 <SwitchPrimitives.Thumb
                     aria-hidden="true"
                     class={cn(
-                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white neutral-900 shadow-sm ring-0 transition duration-200 ease-in-out",
+                        "pointer-events-none inline-block h-4 w-4 transform rounded-full shadow-sm transition-all duration-200 ease-in-out",
                         {
-                            "translate-x-5": props.checked,
-                            "translate-x-0": !props.checked,
+                            "translate-x-5.5 bg-secondary shadow-[0_0_8px_rgba(0,243,255,0.6)]": props.checked,
+                            "translate-x-0.5 bg-neutral-400": !props.checked,
                         },
                     )}
                 />
