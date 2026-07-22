@@ -1,5 +1,5 @@
 import { Icon } from "solid-heroicons";
-import { language } from "solid-heroicons/solid";
+import { globeAlt } from "solid-heroicons/solid";
 import { Component } from "solid-js";
 import {
     DropdownMenu,
@@ -26,7 +26,7 @@ export const LanguageDropdownMenu: Component = () => {
                         "px-1 py-2",
                     )}
                 >
-                    <Icon path={language} class="w-7" />
+                    <Icon path={globeAlt} class="w-7" />
                 </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent class="w-56">

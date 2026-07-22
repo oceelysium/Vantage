@@ -13,7 +13,7 @@ import { RoleFilter } from "./components/draft/RoleFilter";
 import { Search } from "./components/draft/Search";
 import { TeamSelector } from "./components/draft/TeamSelector";
 import { TeamSidebar } from "./components/draft/TeamSidebar";
-import { cog_6Tooth } from "solid-heroicons/solid";
+import { cog_6Tooth, informationCircle } from "solid-heroicons/solid";
 import AnalysisView from "./components/views/analysis/AnalysisView";
 import { Badge } from "./components/common/Badge";
 import { FilterMenu } from "./components/draft/FilterMenu";
@@ -42,7 +42,6 @@ import SettingsDialog from "./components/dialogs/SettingsDialog";
 import { FAQDialog } from "./components/dialogs/FAQDialog";
 import { DesktopAppDialog } from "./components/dialogs/DesktopAppDialog";
 import { UpdateDialog } from "./components/dialogs/UpdateDialog";
-import { OptionsDropdownMenu } from "./components/OptionsMenu";
 import { useDraftAnalysis } from "./contexts/DraftAnalysisContext";
 import { ChampionDraftAnalysisDialog } from "./components/dialogs/ChampionDraftAnalysisDialog";
 import { AnalyzeHoverToggle } from "./components/draft/AnalyzeHoverToggle";
@@ -468,10 +467,17 @@ const App: Component = () => {
                             </DialogTrigger>
                             <SettingsDialog />
                         </Dialog>
-                        <OptionsDropdownMenu
-                            setShowSettings={setShowSettings}
-                            setShowFAQ={setShowFAQ}
-                        />
+                        <button
+                            class={cn(
+                                buttonVariants({ variant: "transparent" }),
+                                "px-1 py-2",
+                            )}
+                            onClick={() => setShowFAQ(true)}
+                            title="FAQ"
+                            aria-label="FAQ"
+                        >
+                            <Icon path={informationCircle} class="w-7" />
+                        </button>
                     </div>
                 </div>
             </header>
