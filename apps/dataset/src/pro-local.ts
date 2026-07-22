@@ -5,6 +5,11 @@ import {
     removeRankBias,
     type Dataset,
 } from "@draftgap/core/src/models/dataset/Dataset";
+import {
+    type Tier,
+    DEFAULT_TIER,
+    tierDatasetName,
+} from "@draftgap/core/src/models/Tier";
 import { getChampions, getVersions } from "./riot";
 import { parseOeRows } from "./pro/oracles-elixir";
 import { buildChampionMap } from "./pro/champion-map";
@@ -68,6 +73,37 @@ async function fetchPublicDataset(name: string): Promise<Dataset> {
     return (await res.json()) as Dataset;
 }
 
+// Diamond+ is a closer prior to pro than Emerald+. Falls back to the default
+// tier when the higher-tier dataset isn't available.
+const PRO_PRIOR_TIER = (process.env.PRO_PRIOR_TIER as Tier) ?? "diamond_plus";
+
+// When DATASET_LOCAL_DIR is set, read the prior from the local filesystem
+// (produced by `bun run start` with the same env) instead of a bucket.
+const LOCAL_DIR = process.env.DATASET_LOCAL_DIR;
+
+async function readLocalDataset(name: string): Promise<Dataset> {
+    const path = resolve(LOCAL_DIR!, `v${DATASET_VERSION}`, `${name}.json`);
+    return JSON.parse(await readFile(path, "utf8")) as Dataset;
+}
+
+async function fetchPrior(tier: Tier): Promise<Dataset> {
+    const load = LOCAL_DIR ? readLocalDataset : fetchPublicDataset;
+    const name = tierDatasetName("current-patch", tier);
+    try {
+        const ds = await load(name);
+        console.log(
+            `Using ${tier} prior (${name})${LOCAL_DIR ? " [local]" : ""}.`,
+        );
+        return ds;
+    } catch (e) {
+        if (tier === DEFAULT_TIER) throw e;
+        console.warn(
+            `Prior "${name}" unavailable; falling back to ${DEFAULT_TIER}.`,
+        );
+        return load("current-patch");
+    }
+}
+
 async function main() {
     const inputs = process.argv.slice(2).filter((a) => !a.startsWith("-"));
     if (inputs.length === 0) {
@@ -96,8 +132,8 @@ async function main() {
     }
     console.log(`Total: ${allMatches.length} pro matches`);
 
-    console.log("Fetching soloqueue prior (current-patch)...");
-    const prior = await fetchPublicDataset("current-patch");
+    console.log(`Fetching soloqueue prior (tier ${PRO_PRIOR_TIER})...`);
+    const prior = await fetchPrior(PRO_PRIOR_TIER);
 
     const usedMatches = allMatches.filter(inScope);
     const aggregate = aggregateProGames(usedMatches);

@@ -1,4 +1,5 @@
 import { RiskLevel } from "../../risk/risk-level";
+import type { Tier } from "../Tier";
 
 export type StatsSite = "op.gg" | "u.gg" | "lolalytics";
 
@@ -32,6 +33,8 @@ export type DraftGapConfig = {
     dataSource?: DataSource;
     /** Minimum true pro games for a champion to appear in pro-mode suggestions. */
     proMinGames?: number;
+    /** Soloqueue level-of-play (rank tier) to analyse. Defaults to Emerald+. */
+    tier?: Tier;
 
     // LOL CLIENT
     disableLeagueClientIntegration: boolean;

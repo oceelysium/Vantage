@@ -14,3 +14,6 @@ apps/frontend/src-tauri/target/
 # Logs / OS cruft
 *.log
 .DS_Store
+
+# frontend-v3 (Graphite WIP — kept local, not shipped). Remove to include it.
+apps/frontend-v3/

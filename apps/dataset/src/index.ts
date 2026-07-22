@@ -23,8 +23,27 @@ import {
     type RiotSummonerSpell,
 } from "./riot";
 import type { SummonerSpellData } from "@draftgap/core/src/models/dataset/SummonerSpellData";
+import {
+    type Tier,
+    TIERS,
+    DEFAULT_TIER,
+    tierDatasetName,
+} from "@draftgap/core/src/models/Tier";
 
 const BATCH_SIZE = 10;
+
+// Which tiers to build. Defaults to Emerald+ (the canonical dataset) and
+// Diamond+ (used as the professional prior). Override with e.g.
+// TIERS=emerald_plus,diamond_plus,master_plus. Unknown values are ignored.
+const TIERS_TO_BUILD: Tier[] = (() => {
+    const env = process.env.TIERS?.split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    const requested = (env?.length ? env : ["emerald_plus", "diamond_plus"]).filter(
+        (t): t is Tier => (TIERS as readonly string[]).includes(t),
+    );
+    return requested.length ? requested : [DEFAULT_TIER];
+})();
 
 // TODO: Move to Riot API if exists?
 const STAT_SHARD_DATA = {
@@ -100,25 +119,37 @@ async function main() {
         },
     }));
 
-    const datasetCurrentPatch = await getDataset(
-        currentVersion,
-        champions,
-        runes,
-        items,
-        summonerSpells,
-    );
-    const dataset30days = await getDataset(
-        "30",
-        champions,
-        runes,
-        items,
-        summonerSpells,
-    );
+    console.log("Building tiers:", TIERS_TO_BUILD.join(", "));
+    for (const tier of TIERS_TO_BUILD) {
+        console.log(`\n=== Tier: ${tier} ===`);
+        const datasetCurrentPatch = await getDataset(
+            currentVersion,
+            champions,
+            runes,
+            items,
+            summonerSpells,
+            tier,
+        );
+        const dataset30days = await getDataset(
+            "30",
+            champions,
+            runes,
+            items,
+            summonerSpells,
+            tier,
+        );
 
-    deleteDatasetMatchupSynergyData(datasetCurrentPatch);
+        deleteDatasetMatchupSynergyData(datasetCurrentPatch);
 
-    await storeDataset(datasetCurrentPatch, { name: "current-patch" });
-    await storeDataset(dataset30days, { name: "30-days" });
+        // The default tier keeps the canonical unsuffixed filenames; other tiers
+        // are written alongside as "<name>.<tier>.json".
+        await storeDataset(datasetCurrentPatch, {
+            name: tierDatasetName("current-patch", tier),
+        });
+        await storeDataset(dataset30days, {
+            name: tierDatasetName("30-days", tier),
+        });
+    }
 }
 
 function riotRunesToRuneData(runes: RiotRunePath[]) {
@@ -209,8 +240,9 @@ async function getDataset(
     runes: RiotRunePath[],
     items: Record<string, RiotItem>,
     summonerSpells: Record<string, RiotSummonerSpell>,
+    tier: Tier = DEFAULT_TIER,
 ) {
-    console.log("Getting dataset for version", version);
+    console.log("Getting dataset for version", version, "tier", tier);
     const dataset: Dataset = {
         version: version,
         date: new Date().toISOString(),
@@ -233,7 +265,11 @@ async function getDataset(
                 async (champion) =>
                     [
                         champion,
-                        await getChampionDataFromLolalytics(version, champion),
+                        await getChampionDataFromLolalytics(
+                            version,
+                            champion,
+                            tier,
+                        ),
                     ] as const,
             ),
         );

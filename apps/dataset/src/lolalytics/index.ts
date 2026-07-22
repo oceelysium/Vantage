@@ -14,10 +14,11 @@ import type { RiotChampion } from "../riot";
 export async function getChampionDataFromLolalytics(
     version: string,
     champion: RiotChampion,
+    tier: string = "emerald_plus",
 ) {
     const [championData, champion2Data] = await Promise.all([
-        getLolalyticsQwikChampion(version, champion.id),
-        getLolalyticsQwikChampion2(version, champion.id),
+        getLolalyticsQwikChampion(version, champion.id, undefined, undefined, undefined, tier),
+        getLolalyticsQwikChampion2(version, champion.id, undefined, tier),
     ]);
 
     // If data is not available, throw
@@ -33,8 +34,8 @@ export async function getChampionDataFromLolalytics(
 
     const rolePromises = remainingRoles.map((role) =>
         Promise.all([
-            getLolalyticsQwikChampion(version, champion.id, role),
-            getLolalyticsQwikChampion2(version, champion.id, role),
+            getLolalyticsQwikChampion(version, champion.id, role, undefined, undefined, tier),
+            getLolalyticsQwikChampion2(version, champion.id, role, tier),
         ]),
     );
     const roleDataResults = await Promise.allSettled(rolePromises);
@@ -65,9 +66,10 @@ export async function getChampionDataFromLolalytics(
 
                 const championRoleData: ChampionRoleData = {
                     games: championData.header.n,
-                    wins: Math.round(
-                        (championData.header.n * championData.header.wr) / 100,
-                    ),
+                    // Keep wins as a float. lolalytics' winrate is already rounded
+                    // upstream; adding a Math.round here would compound that error.
+                    // Matchup/synergy cells below already store fractional wins.
+                    wins: (championData.header.n * championData.header.wr) / 100,
                     matchup: Object.fromEntries(
                         LOLALYTICS_ROLES.map((role) => {
                             const data = championData.enemy[role];

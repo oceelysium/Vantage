@@ -9,6 +9,8 @@
         "bump-version": "bun run typecheck && bun scripts/bump-version.ts",
         "typecheck": "turbo typecheck",
         "dev": "bun run --filter @draftgap/frontend dev",
+        "dev-v2": "bun run --filter @draftgap/frontend-v2 dev",
+        "dev-v3": "bun run --filter @draftgap/frontend-v3 dev",
         "tauri": "bun run --filter @draftgap/frontend tauri"
     },
     "devDependencies": {

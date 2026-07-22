@@ -24,6 +24,7 @@ export async function getLolalyticsQwikChampion2(
     patch: string,
     championId: string,
     role?: LolalyticsRole,
+    tier: string = "emerald_plus",
     // matchupId?: string,
     // matchupRole?: LolalyticsRole
 ) {
@@ -38,7 +39,7 @@ export async function getLolalyticsQwikChampion2(
     const queryParams = new URLSearchParams();
     queryParams.append("ep", "build-team");
     queryParams.append("v", "1");
-    queryParams.append("tier", "emerald_plus");
+    queryParams.append("tier", tier);
     queryParams.append("queue", "ranked");
     queryParams.append("region", "all");
     queryParams.append("patch", patch);

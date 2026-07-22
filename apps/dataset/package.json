@@ -6,6 +6,7 @@
         "pro": "bun run src/pro-index.ts",
         "pro:local": "bun run src/pro-local.ts",
         "pro:backtest": "bun run src/pro-backtest.ts",
+        "build:tiers": "bash build-tiers.sh",
         "test": "bun test",
         "typecheck": "tsc --noEmit",
         "format": "bunx prettier . --write"

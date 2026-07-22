@@ -1,5 +1,13 @@
 import "dotenv/config";
-import { removeRankBias } from "@draftgap/core/src/models/dataset/Dataset";
+import {
+    removeRankBias,
+    type Dataset,
+} from "@draftgap/core/src/models/dataset/Dataset";
+import {
+    type Tier,
+    DEFAULT_TIER,
+    tierDatasetName,
+} from "@draftgap/core/src/models/Tier";
 import { getDataset, storeDataset } from "./storage/storage";
 import { loadProMatches } from "./pro";
 import { aggregateProGames } from "./pro/aggregate";
@@ -23,6 +31,27 @@ import type { ProMatch } from "./pro/types";
 
 const PRO_PRIOR_GAMES = Number(process.env.PRO_PRIOR_GAMES ?? 100);
 
+// Which soloqueue tier the pro blend uses as its prior. Diamond+ is closer to
+// professional play than Emerald+. Falls back to the default tier if that
+// dataset hasn't been built yet.
+const PRO_PRIOR_TIER = (process.env.PRO_PRIOR_TIER as Tier) ?? "diamond_plus";
+
+async function loadPrior(tier: Tier): Promise<Dataset> {
+    const name = tierDatasetName("current-patch", tier);
+    try {
+        const ds = await getDataset({ name });
+        console.log(`Using ${tier} prior (${name}).`);
+        return ds;
+    } catch (e) {
+        if (tier === DEFAULT_TIER) throw e;
+        console.warn(
+            `Prior "${name}" not found; falling back to ${DEFAULT_TIER}. ` +
+                `Build it with TIERS=${tier} to enable the higher-tier prior.`,
+        );
+        return getDataset({ name: "current-patch" });
+    }
+}
+
 function csvEnv(name: string): Set<string> | undefined {
     const v = process.env[name];
     if (!v) return undefined;
@@ -34,8 +63,8 @@ const PATCH_FILTER = csvEnv("PRO_PATCH");
 const LEAGUE_FILTER = csvEnv("PRO_LEAGUE");
 
 async function main() {
-    console.log("Loading soloqueue prior (current-patch)...");
-    const prior = await getDataset({ name: "current-patch" });
+    console.log(`Loading soloqueue prior (tier ${PRO_PRIOR_TIER})...`);
+    const prior = await loadPrior(PRO_PRIOR_TIER);
 
     console.log("Loading Oracle's Elixir pro matches...");
     const { matches, skip } = await loadProMatches({

@@ -287,6 +287,7 @@ export async function getLolalyticsQwikChampion(
     role?: LolalyticsRole,
     matchupId?: string,
     matchupRole?: LolalyticsRole,
+    tier: string = "emerald_plus",
 ) {
     championId = championId.toLowerCase();
     if (championId === "monkeyking") {
@@ -303,7 +304,7 @@ export async function getLolalyticsQwikChampion(
     patch = patch.split(".").slice(0, 2).join(".");
 
     const queryParams = new URLSearchParams();
-    queryParams.append("tier", "emerald_plus");
+    queryParams.append("tier", tier);
     queryParams.append("region", "all");
     queryParams.append("patch", patch);
     if (role) {

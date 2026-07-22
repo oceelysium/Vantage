@@ -1,0 +1,72 @@
+{
+    "$schema": "../node_modules/@tauri-apps/cli/schema.json",
+    "build": {
+        "beforeBuildCommand": "bun run build",
+        "beforeDevCommand": "bun run dev",
+        "frontendDist": "../dist",
+        "devUrl": "http://localhost:3000"
+    },
+    "bundle": {
+        "active": true,
+        "category": "DeveloperTool",
+        "copyright": "",
+        "targets": "all",
+        "externalBin": [],
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ],
+        "windows": {
+            "certificateThumbprint": null,
+            "digestAlgorithm": "sha256",
+            "timestampUrl": ""
+        },
+        "longDescription": "",
+        "macOS": {
+            "entitlements": null,
+            "exceptionDomain": "",
+            "frameworks": [],
+            "providerShortName": null,
+            "signingIdentity": null
+        },
+        "resources": [],
+        "shortDescription": "",
+        "linux": {
+            "deb": {
+                "depends": []
+            }
+        },
+        "createUpdaterArtifacts": "v1Compatible"
+    },
+    "productName": "Vantage",
+    "mainBinaryName": "Vantage",
+    "version": "3.2.1",
+    "identifier": "com.oceelysium.vantage",
+    "plugins": {
+        "updater": {
+            "_comment": "REPLACE BEFORE DISTRIBUTING DESKTOP BUILDS: generate your own keypair with `tauri signer generate` and publish your own latest.json. The pubkey below is inherited from upstream DraftGap and must not be used to sign your releases.",
+            "pubkey": "",
+            "endpoints": [
+                "https://github.com/oceelysium/Vantage/releases/latest/download/latest.json"
+            ]
+        }
+    },
+    "app": {
+        "windows": [
+            {
+                "fullscreen": false,
+                "height": 850,
+                "resizable": true,
+                "title": "Vantage",
+                "width": 1600,
+                "useHttpsScheme": true
+            }
+        ],
+        "security": {
+            "csp": null
+        }
+    }
+}
