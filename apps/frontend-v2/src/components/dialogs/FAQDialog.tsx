@@ -13,7 +13,7 @@ export function FAQDialog() {
                         What is Vantage?
                     </h3>
                     <p class="font-body text-sm leading-relaxed">
-                        Vantage is a League of Legends draft-analysis tool. As
+                        Vantage is based on <a href="https://github.com/vigo-vlugt/draftgap" target="_blank" class="underline">DraftGap</a> by Vigo Vlugt. As
                         both teams pick, it estimates each side's win
                         probability and ranks every remaining champion by how
                         much it would raise your team's chances — so you can see

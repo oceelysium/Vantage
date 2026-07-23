@@ -1,6 +1,10 @@
-{
     "name": "vantage",
     "version": "3.2.1",
+    "author": "Elysium",
+    "contributors": [
+        "Vigo Vlugt (DraftGap Author)"
+    ],
+    "license": "MIT",
     "workspaces": [
         "packages/*",
         "apps/*"

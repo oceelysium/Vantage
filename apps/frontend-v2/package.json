@@ -1,6 +1,10 @@
-{
     "name": "@draftgap/frontend-v2",
     "version": "3.2.1",
+    "author": "Elysium",
+    "contributors": [
+        "Vigo Vlugt (DraftGap Author)"
+    ],
+    "license": "MIT",
     "type": "module",
     "scripts": {
         "start": "bunx --bun vite",

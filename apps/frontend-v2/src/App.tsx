@@ -361,7 +361,11 @@ const App: Component = () => {
                 <FAQDialog />
             </Dialog>
             <header class="bg-primary px-4 py-1 border-b border-neutral-800 flex items-center justify-between relative overflow-hidden">
-                <div class="flex-1 hidden md:block" />
+                <div class="flex-1 hidden md:flex items-center">
+                    <span class="text-[10px] uppercase tracking-[0.25em] text-neutral-500 select-none whitespace-nowrap">
+                        By Elysium
+                    </span>
+                </div>
                 <div class="flex-initial flex items-center justify-center">
                     <img src="/vantage_logo.png" alt="VANTAGE" class="h-24 -my-7.5 w-auto object-contain select-none mix-blend-screen" />
                 </div>
@@ -449,9 +453,6 @@ const App: Component = () => {
                     >
                         <DesktopAppDialog open={showDownloadModal()} />
                     </Dialog>
-                    <span class="hidden md:inline text-[10px] uppercase tracking-[0.25em] text-neutral-500 select-none whitespace-nowrap">
-                        By Elysium
-                    </span>
                     <div class="flex gap-1">
                         <LanguageDropdownMenu />
                         <Dialog
