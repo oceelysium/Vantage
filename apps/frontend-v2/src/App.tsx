@@ -385,7 +385,7 @@ const App: Component = () => {
                                         <img
                                             src={emblemUrlByTier[config.tier ?? DEFAULT_TIER]}
                                             alt=""
-                                            class="w-7 h-7 -my-1 object-contain select-none"
+                                            class="w-4 h-4 object-contain select-none shrink-0"
                                         />
                                         <span>{displayNameByTier[config.tier ?? DEFAULT_TIER]}</span>
                                     </div>

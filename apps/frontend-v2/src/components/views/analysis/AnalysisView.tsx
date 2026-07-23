@@ -1,23 +1,31 @@
-import { createSignal, Show } from "solid-js";
+import { createSignal, Match, Show, Switch } from "solid-js";
 import { ButtonGroup } from "../../common/ButtonGroup";
-import { DuoResultTable } from "./DuoResultTable";
-import { IndividualChampionsResultTable } from "./IndividualChampionsResultTable";
-import { MatchupResultTable } from "./MatchupResultTable";
-import { DraftSummaryCards } from "./SummaryCards";
-import { TotalChampionContributionTable } from "./TotalChampionContributionTable";
-import { tooltip } from "../../../directives/tooltip";
 import { Team } from "@draftgap/core/src/models/Team";
 import { useUser } from "../../../contexts/UserContext";
 import { useDraftAnalysis } from "../../../contexts/DraftAnalysisContext";
 import { useDraft } from "../../../contexts/DraftContext";
+import { WinrateWaterfallCard } from "./WinrateWaterfallCard";
+import { SwingFactorsCard } from "./SwingFactorsCard";
+import { ChampionContributionBars } from "./ChampionContributionBars";
+import { LaneDuelsCard } from "./LaneDuelsCard";
+import { TotalChampionContributionTable } from "./TotalChampionContributionTable";
+import { IndividualChampionsResultTable } from "./IndividualChampionsResultTable";
+import { MatchupResultTable } from "./MatchupResultTable";
+import { DuoResultTable } from "./DuoResultTable";
 import { ScalingChart } from "./ScalingChart";
+import { tooltip } from "../../../directives/tooltip";
 // eslint-disable-next-line
 tooltip;
+
+type ViewMode = "story" | "tables";
 
 export default function AnalysisView() {
     const { config } = useUser();
     const { setAnalysisPick } = useDraftAnalysis();
     const { draftFinished } = useDraft();
+
+    const [activeTeam, setActiveTeam] = createSignal<Team>("ally");
+    const [viewMode, setViewMode] = createSignal<ViewMode>("story");
     const [showAllMatchups, setShowAllMatchups] = createSignal(false);
 
     const openChampionDraftAnalysisModal = (
@@ -28,316 +36,235 @@ export default function AnalysisView() {
     };
 
     return (
-        <div>
-            <DraftSummaryCards team="ally" />
-            <DraftSummaryCards team="opponent" class="mb-12 mt-6" />
+        <div class="space-y-6 pb-12">
+            {/* Top Control Bar: Perspective & View Mode */}
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 rounded-xl bg-neutral-900/60 border border-neutral-800/80 shadow-md">
+                {/* Team Perspective Selector */}
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-title font-bold uppercase tracking-wider text-neutral-400">
+                        Perspective
+                    </span>
+                    <ButtonGroup
+                        options={[
+                            { label: "ALLY TEAM", value: "ally" as const },
+                            { label: "OPPONENT", value: "opponent" as const },
+                        ]}
+                        size="sm"
+                        selected={activeTeam()}
+                        onChange={setActiveTeam}
+                    />
+                </div>
 
+                {/* View Mode Toggle (Story & Drivers vs Raw Tables) */}
+                <div class="flex items-center gap-3 self-end sm:self-auto">
+                    <span class="text-xs font-title font-bold uppercase tracking-wider text-neutral-400">
+                        Display Mode
+                    </span>
+                    <ButtonGroup
+                        options={[
+                            { label: "STORY & DRIVERS", value: "story" as const },
+                            { label: "RAW DATA TABLES", value: "tables" as const },
+                        ]}
+                        size="sm"
+                        selected={viewMode()}
+                        onChange={setViewMode}
+                    />
+                </div>
+            </div>
+
+            {/* Main Content Area */}
+            <Switch>
+                {/* Mode A: Story & Dynamic HUD View */}
+                <Match when={viewMode() === "story"}>
+                    <div class="space-y-6">
+                        {/* Top Story Layer: Waterfall & Swing Factors */}
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <WinrateWaterfallCard team={activeTeam()} />
+                            <SwingFactorsCard team={activeTeam()} />
+                        </div>
+
+                        {/* Diverging Champion Impact Ranking */}
+                        <ChampionContributionBars
+                            team={activeTeam()}
+                            onClickChampion={(championKey) =>
+                                openChampionDraftAnalysisModal(
+                                    activeTeam(),
+                                    championKey,
+                                )
+                            }
+                        />
+
+                        {/* Head-to-Head Lane Duels & Duos */}
+                        <LaneDuelsCard
+                            onClickChampion={(team, championKey) =>
+                                openChampionDraftAnalysisModal(team, championKey)
+                            }
+                        />
+                    </div>
+                </Match>
+
+                {/* Mode B: Detailed Data Tables View */}
+                <Match when={viewMode() === "tables"}>
+                    <div class="space-y-8">
+                        {/* Overview Tables */}
+                        <div
+                            class="flex-col md:flex-row flex gap-4 overflow-hidden"
+                            id="total-result"
+                        >
+                            <div class="md:w-1/2">
+                                <h3 class="text-xl font-title font-bold uppercase mb-2 text-neutral-300">
+                                    Ally Overview
+                                </h3>
+                                <TotalChampionContributionTable
+                                    team="ally"
+                                    onClickChampion={(key) =>
+                                        openChampionDraftAnalysisModal("ally", key)
+                                    }
+                                />
+                            </div>
+                            <div class="md:w-1/2">
+                                <h3 class="text-xl font-title font-bold uppercase mb-2 text-neutral-300">
+                                    Opponent Overview
+                                </h3>
+                                <TotalChampionContributionTable
+                                    team="opponent"
+                                    onClickChampion={(key) =>
+                                        openChampionDraftAnalysisModal(
+                                            "opponent",
+                                            key,
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+
+                        {/* Base Champion Winrates */}
+                        <Show when={!config.ignoreChampionWinrates}>
+                            <div
+                                class="flex-col flex sm:flex-row gap-4"
+                                id="champions-result"
+                            >
+                                <div class="sm:w-1/2">
+                                    <h3 class="text-xl font-title font-bold uppercase mb-2 text-neutral-300">
+                                        Ally Champions
+                                    </h3>
+                                    <IndividualChampionsResultTable
+                                        team="ally"
+                                        onClickChampion={(championKey) =>
+                                            openChampionDraftAnalysisModal(
+                                                "ally",
+                                                championKey,
+                                            )
+                                        }
+                                    />
+                                </div>
+                                <div class="sm:w-1/2">
+                                    <h3 class="text-xl font-title font-bold uppercase mb-2 text-neutral-300">
+                                        Opponent Champions
+                                    </h3>
+                                    <IndividualChampionsResultTable
+                                        team="opponent"
+                                        onClickChampion={(championKey) =>
+                                            openChampionDraftAnalysisModal(
+                                                "opponent",
+                                                championKey,
+                                            )
+                                        }
+                                    />
+                                </div>
+                            </div>
+                        </Show>
+
+                        {/* Matchups Table */}
+                        <div>
+                            <div
+                                class="flex flex-row justify-between items-center mb-2"
+                                id="matchup-result"
+                            >
+                                <div>
+                                    <h3 class="text-xl font-title font-bold uppercase text-neutral-300">
+                                        Matchups
+                                    </h3>
+                                    <p class="text-xs text-neutral-500 uppercase">
+                                        Champion winrates normalized
+                                    </p>
+                                </div>
+                                <ButtonGroup
+                                    options={[
+                                        { label: "HEAD 2 HEAD", value: false },
+                                        { label: "ALL", value: true },
+                                    ]}
+                                    size="sm"
+                                    selected={showAllMatchups()}
+                                    onChange={setShowAllMatchups}
+                                />
+                            </div>
+                            <MatchupResultTable
+                                class="w-full"
+                                showAll={showAllMatchups()}
+                                onClickChampion={(team, championKey) =>
+                                    openChampionDraftAnalysisModal(
+                                        team,
+                                        championKey,
+                                    )
+                                }
+                            />
+                        </div>
+
+                        {/* Duos Tables */}
+                        <div
+                            class="flex-col md:flex-row flex gap-4"
+                            id="duo-result"
+                        >
+                            <div class="md:w-1/2">
+                                <h3 class="text-xl font-title font-bold uppercase text-neutral-300">
+                                    Ally Duos
+                                </h3>
+                                <p class="text-xs text-neutral-500 uppercase mb-2">
+                                    Champion winrates normalized
+                                </p>
+                                <DuoResultTable
+                                    team="ally"
+                                    onClickChampion={(key) =>
+                                        openChampionDraftAnalysisModal(
+                                            "ally",
+                                            key,
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div class="md:w-1/2">
+                                <h3 class="text-xl font-title font-bold uppercase text-neutral-300">
+                                    Opponent Duos
+                                </h3>
+                                <p class="text-xs text-neutral-500 uppercase mb-2">
+                                    Champion winrates normalized
+                                </p>
+                                <DuoResultTable
+                                    team="opponent"
+                                    onClickChampion={(key) =>
+                                        openChampionDraftAnalysisModal(
+                                            "opponent",
+                                            key,
+                                        )
+                                    }
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </Match>
+            </Switch>
+
+            {/* Scaling Progression Section */}
             <Show when={draftFinished()}>
-                <div class="mb-8 p-5 bg-neutral-900/40 border border-neutral-800 rounded-lg max-w-2xl">
-                    <h3 class="text-sm font-title font-bold uppercase tracking-wider text-neutral-300 mb-1">
+                <div class="p-5 bg-neutral-900/60 border border-neutral-800/80 rounded-xl w-full">
+                    <h3 class="text-xs font-title font-bold uppercase tracking-wider text-neutral-300 mb-1">
                         Scaling Progression
                     </h3>
-                    <span
-                        class="text-neutral-500 uppercase block text-[10px] font-title mb-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    The overall team winrate has been normalized
-                                    (removed) before calculating the team winrate
-                                    over time.
-                                </>
-                            ),
-                        }}
-                    >
+                    <span class="text-neutral-500 uppercase block text-[10px] font-title mb-3">
                         Team winrate normalized over game duration
                     </span>
-                    <div class="h-64 mt-2">
-                        <ScalingChart />
-                    </div>
-                </div>
-            </Show>
-
-            <div
-                class="flex-col md:flex-row flex gap-4 mb-8 overflow-hidden"
-                id="total-result"
-            >
-                <div class="md:w-1/2">
-                    <h3
-                        class="text-3xl mb-1 uppercase ml-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    How much does every champion contribute to
-                                    the draft in which aspect?
-                                    <br />
-                                    <br />
-                                    <strong>BASE</strong>: Champion base winrate
-                                    <br />
-                                    <strong>MATCHUP</strong>: Total winrate of
-                                    all champion matchups
-                                    <br />
-                                    <strong>DUO</strong>: Total winrate of all
-                                    champion duos
-                                    <br />
-                                    <strong>TOTAL</strong>: Total contribution
-                                    of champion (BASE + MATCHUP + DUO)
-                                </>
-                            ),
-                        }}
-                    >
-                        Ally overview
-                    </h3>
-                    <TotalChampionContributionTable
-                        team="ally"
-                        onClickChampion={(key) =>
-                            openChampionDraftAnalysisModal("ally", key)
-                        }
-                    />
-                </div>
-                <div class="md:w-1/2">
-                    <h3
-                        class="text-3xl mb-1 uppercase ml-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    How much does every champion contribute to
-                                    the draft in which aspect?
-                                    <br />
-                                    <br />
-                                    <strong>BASE</strong>: Champion base winrate
-                                    <br />
-                                    <strong>MATCHUP</strong>: Total winrate of
-                                    all champion matchups
-                                    <br />
-                                    <strong>DUO</strong>: Total winrate of all
-                                    champion duos
-                                    <br />
-                                    <strong>TOTAL</strong>: Total contribution
-                                    of champion (BASE + MATCHUP + DUO)
-                                </>
-                            ),
-                        }}
-                    >
-                        Opponent overview
-                    </h3>
-                    <TotalChampionContributionTable
-                        team="opponent"
-                        onClickChampion={(key) =>
-                            openChampionDraftAnalysisModal("opponent", key)
-                        }
-                    />
-                </div>
-            </div>
-
-            <Show when={!config.ignoreChampionWinrates}>
-                <div
-                    class="flex-col flex sm:flex-row gap-4 mb-8"
-                    id="champions-result"
-                >
-                    <div class="sm:w-1/2">
-                        <h3
-                            class="text-3xl uppercase mb-1 ml-4"
-                            // @ts-ignore
-                            use:tooltip={{
-                                content: (
-                                    <>Base winrates of individual champions</>
-                                ),
-                            }}
-                        >
-                            Ally champions
-                        </h3>
-                        <IndividualChampionsResultTable
-                            team="ally"
-                            onClickChampion={(championKey) =>
-                                openChampionDraftAnalysisModal(
-                                    "ally",
-                                    championKey,
-                                )
-                            }
-                        />
-                    </div>
-                    <div class="sm:w-1/2">
-                        <h3
-                            class="text-3xl uppercase mb-1 ml-4"
-                            // @ts-ignore
-                            use:tooltip={{
-                                content: (
-                                    <>Base winrates of individual champions</>
-                                ),
-                            }}
-                        >
-                            Opponent champions
-                        </h3>
-                        <IndividualChampionsResultTable
-                            team="opponent"
-                            onClickChampion={(championKey) =>
-                                openChampionDraftAnalysisModal(
-                                    "opponent",
-                                    championKey,
-                                )
-                            }
-                        />
-                    </div>
-                </div>
-            </Show>
-
-            <div
-                class="flex-col flex md:flex-row justify-between gap-2 md:items-end mb-2 items-end"
-                id="matchup-result"
-            >
-                <div>
-                    <h3
-                        class="text-3xl uppercase ml-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    Winrates of all matchups between ally and
-                                    opponent champions
-                                </>
-                            ),
-                        }}
-                    >
-                        Matchups
-                    </h3>
-                    <p
-                        class="text-neutral-500 uppercase ml-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    The individual champion winrates have been
-                                    normalized (removed) before calculating the
-                                    matchup winrates to remove the current meta
-                                    bias of the matchup.
-                                </>
-                            ),
-                        }}
-                    >
-                        Champion winrates normalized
-                    </p>
-                </div>
-                <ButtonGroup
-                    options={[
-                        { label: "HEAD 2 HEAD", value: false },
-                        { label: "ALL", value: true },
-                    ]}
-                    size="sm"
-                    selected={showAllMatchups()}
-                    onChange={setShowAllMatchups}
-                />
-            </div>
-            <MatchupResultTable
-                class="w-full mb-8"
-                showAll={showAllMatchups()}
-                onClickChampion={(team, championKey) =>
-                    openChampionDraftAnalysisModal(team, championKey)
-                }
-            />
-
-            <div class="flex-col md:flex-row flex gap-4 mb-8" id="duo-result">
-                <div class="md:w-1/2">
-                    <h3
-                        class="text-3xl uppercase ml-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>Winrates of all duos in the ally draft</>
-                            ),
-                        }}
-                    >
-                        Ally duos
-                    </h3>
-                    <p
-                        class="text-neutral-500 uppercase ml-4 mb-2"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    The individual champion winrates have been
-                                    normalized (removed) before calculating the
-                                    duo winrates.
-                                </>
-                            ),
-                        }}
-                    >
-                        Champion winrates normalized
-                    </p>
-                    <DuoResultTable
-                        team="ally"
-                        onClickChampion={(key) =>
-                            openChampionDraftAnalysisModal("ally", key)
-                        }
-                    />
-                </div>
-                <div class="md:w-1/2">
-                    <h3
-                        class="text-3xl uppercase ml-4"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>Winrates of all duos in the opponent draft</>
-                            ),
-                        }}
-                    >
-                        Opponent duos
-                    </h3>
-                    <p
-                        class="text-neutral-500 uppercase ml-4 mb-2"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    The individual champion winrates have been
-                                    normalized (removed) before calculating the
-                                    duo winrates.
-                                </>
-                            ),
-                        }}
-                    >
-                        Champion winrates normalized
-                    </p>
-                    <DuoResultTable
-                        team="opponent"
-                        onClickChampion={(key) =>
-                            openChampionDraftAnalysisModal("opponent", key)
-                        }
-                    />
-                </div>
-            </div>
-
-            {/* <div class="mb-2 mt-16 flex justify-center items-center gap-2">
-                <div class="h-[3px] bg-neutral-700 w-24" />
-
-                <h2 class="text-4xl uppercase text-neutral-500 text-center">
-                    Misc
-                </h2>
-
-                <div class="h-[3px] bg-neutral-700 w-24" />
-            </div> */}
-
-            <Show when={!draftFinished()}>
-                <div>
-                    <h3 class="text-3xl uppercase ml-4">Scaling</h3>
-                    <span
-                        class="text-neutral-500 uppercase ml-4 mb-2"
-                        // @ts-ignore
-                        use:tooltip={{
-                            content: (
-                                <>
-                                    The overall team winrate has been normalized
-                                    (removed) before calculating the team winrate
-                                    over time.
-                                </>
-                            ),
-                        }}
-                    >
-                        Team winrate normalized
-                    </span>
-                    <div class="p-4 rounded-md bg-primary w-1/2 max-w-2xl h-64">
+                    <div class="mt-2 w-full">
                         <ScalingChart />
                     </div>
                 </div>
